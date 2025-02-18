@@ -1,49 +1,65 @@
-let home_count = document.getElementById("home-counter")
-let guest_count = document.getElementById("guest-counter")
-
-let homeScore = parseInt(home_count.textContent);
-let guestScore = parseInt(guest_count.textContent);
-console.log(homeScore)
-if (homeScore > guestScore) {
-    home_count.style.color = "green";
+let player = {
+    name: "Declan",
+    chips: 200
 }
 
-count = 0
-guest_counter = 0
+let cards = []
+let sum = 0
+let hasBlackJack = false
+let isAlive = false
+let message = ""
+let messageEl = document.getElementById("message-el")
+let sumEl = document.getElementById("sum-el")
+let cardsEl = document.getElementById("cards-el")
+let playerEl = document.getElementById("player-el")
 
-function home1() {
-    count += 1
-    home_count.innerText = count
+playerEl.textContent = player.name + ": $" + player.chips
+
+function getRandomCard() {
+    let randomNumber = Math.floor( Math.random()*13 ) + 1
+    if (randomNumber > 10) {
+        return 10
+    } else if (randomNumber === 1) {
+        return 11
+    } else {
+        return randomNumber
+    }
 }
 
-function home2() {
-    count += 2
-    home_count.innerText = count
-
+function startGame() {
+    isAlive = true
+    let firstCard = getRandomCard()
+    let secondCard = getRandomCard()
+    cards = [firstCard, secondCard]
+    sum = firstCard + secondCard
+    renderGame()
 }
 
-function home3() {
-    count += 3
-    home_count.innerText = count
+function renderGame() {
+    cardsEl.textContent = "Cards: "
+    for (let i = 0; i < cards.length; i++) {
+        cardsEl.textContent += cards[i] + " "
+    }
     
+    sumEl.textContent = "Sum: " + sum
+    if (sum <= 20) {
+        message = "Do you want to draw a new card?"
+    } else if (sum === 21) {
+        message = "You've got Blackjack!"
+        hasBlackJack = true
+    } else {
+        message = "You're out of the game!"
+        isAlive = false
+    }
+    messageEl.textContent = message
 }
 
-function guest1() {
-    guest_counter += 1
-    guest_count.innerText = guest_counter
-}
 
-function guest2() {
-    guest_counter += 2
-    guest_count.innerText = guest_counter
-}
-
-function guest3() {
-    guest_counter += 3
-    guest_count.innerText = guest_counter
-}
-
-function reset() { 
-    home_count.innerText = 0 
-    guest_count.innerText = 0
+function newCard() {
+    if (isAlive === true && hasBlackJack === false) {
+        let card = getRandomCard()
+        sum += card
+        cards.push(card)
+        renderGame()        
+    }
 }
